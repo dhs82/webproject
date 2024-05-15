@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>영화 페이지</title>
+    <link rel="stylesheet" type="text/css" href="{%static 'css/styles.css'%}" />
+    <!-- 외부 CSS 파일 연결 -->
+  </head>
+  <body>
+    <header>
+      <h1><a href="{% url 'homelands' %}">영화 페이지</a></h1>
+    </header>
+    <nav>
+      <ul>
+        <li><a href="{% url 'info' %}">영화 소개</a></li>
+        <li><a href="{% url 'recommend' %}">영화 추천</a></li>
+        <li><a href="{% url 'homelands' %}">북마크</a></li>
+      </ul>
+    </nav>
+    <section id="movie-intro">
+      <h2>추천페이지</h2>
+      <p>추천페이지임</p>
+      <ul>
+        <li>어벤져스: 엔드게임</li>
+        <li>존 윅 3</li>
+        <li>기생충</li>
+        <li>분노의 질주: 홉스 & 쇼</li>
+      </ul>
+    </section>
+    <footer>
+      <p>&copy; 2024 영화 페이지</p>
+    </footer>
+  </body>
+</html>
