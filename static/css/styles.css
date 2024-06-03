@@ -38,7 +38,7 @@ nav ul li a {
   display: inline-block;
 }
 
-section {
+.movie-intro {
   padding: 20px;
   margin: 20px auto;
   max-width: 800px;
@@ -64,3 +64,8 @@ footer {
   bottom: 0;
   width: 100%;
 }
+
+
+
+
+
