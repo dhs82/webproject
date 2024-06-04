@@ -1,3 +1,4 @@
+from django.contrib.sessions.models import Session
 from django.db import models
 
 
@@ -24,6 +25,16 @@ class Movie(models.Model):
     musical = models.BooleanField(default=False)  # 뮤지컬 장르
     war = models.BooleanField(default=False)  # 전쟁 장르
     western = models.BooleanField(default=False)  # 서부극 장르
+    likebool = models.BooleanField(default=False)  # 좋아하는지 ON/OF로 저장
 
     def __str__(self):
         return self.subject
+
+
+class Bookmark(models.Model):
+    session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    is_bookmarked = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Session: {self.session.session_key} - {self.movie.subject} - Bookmarked: {self.is_bookmarked}"

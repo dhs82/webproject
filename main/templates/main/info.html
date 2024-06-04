@@ -21,13 +21,16 @@
     <ul>
       <li><a href="{% url 'info' %}">영화 소개</a></li>
       <li><a href="{% url 'recommend' %}">영화 추천</a></li>
-      <li><a href="{% url 'homelands' %}">북마크</a></li>
+      <li><a href="{% url 'bookmark' %}">북마크</a></li>
     </ul>
   </nav>
   <!--네비게이션 끗-->
 <div class="container-fluid d-flex justify-content-center" style="padding-top: 30px;">
   {% for movie in movies %}
-  <div class="card mb-3" style="margin: 20px; max-width: 700px; min-height: 200px;">
+  <div class="card mb-3" style="margin: 20px; max-width: 700px; min-height: 200px; position: relative;">
+    <button type="button" class="btn btn-primary bookmark-btn" data-id="{{ movie.id }}" style="position: absolute; top: 5px; right: 5px;">
+      {% if movie.likebool %} 북마크 해제 {% else %} 북마크 {% endif %}
+    </button>
     <div class="row g-0">
       <div class="col-md-3">
         <img src="{% static 'images/' %}{{ movie.subject }}.png"
@@ -46,6 +49,34 @@
   </div>
   {% endfor %}
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('.bookmark-btn').click(function() {
+      var button = $(this);
+      var movieId = button.data('id');
+      $.ajax({
+        url: '{% url "toggle_like" 0 %}'.replace('0', movieId),
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+          if (response.likebool) {
+            button.text('북마크 해제');
+          } else {
+            button.text('북마크');
+          }
+        },
+        error: function() {
+          alert('Something went wrong. Please try again.');
+        }
+      });
+    });
+  });
+</script>
+
 
   <!--푸터-->
   <footer>
