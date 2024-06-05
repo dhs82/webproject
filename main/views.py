@@ -1,3 +1,4 @@
+import random
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from .models import Movie
@@ -14,6 +15,7 @@ def info(request):
     movies = Movie.objects.all()
     return render(request, 'main/info.html', {'movies': movies})
 
+
 def toggle_like(request, movie_id):
     if request.method == 'POST':
         movie = get_object_or_404(Movie, id=movie_id)
@@ -21,6 +23,7 @@ def toggle_like(request, movie_id):
         movie.save()
         return JsonResponse({'likebool': movie.likebool})
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
 
 def recommend(request):
     filtered_movies = None  # 처음에는 아무 영화도 필터링하지 않음
@@ -47,5 +50,7 @@ def homelands(request):
     return render(request, 'main/homelands.html')
 
 
-def test(request):
-    return render(request, 'main/test.html')
+def find(request):
+    movies = Movie.objects.all()
+    movie = random.choice(movies) if movies else None
+    return render(request, 'main/find.html', {'movies': [movie] if movie else []})

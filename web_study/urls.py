@@ -25,5 +25,5 @@ urlpatterns = [
     path('info/', views.info, name='info'),
     path('bookmark/', views.bookmark, name='bookmark'),
     path('recommend/', views.recommend, name='recommend'),
-    path('test/', views.test, name='test')
+    path('find/', views.find, name='find')
 ]
