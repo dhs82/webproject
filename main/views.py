@@ -47,5 +47,5 @@ def homelands(request):
     return render(request, 'main/homelands.html')
 
 
-def test(request):
-    return render(request, 'main/test.html')
+def find(request):
+    return render(request, 'main/find.html')
