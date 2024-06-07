@@ -26,6 +26,7 @@ class Movie(models.Model):
     war = models.BooleanField(default=False)  # 전쟁 장르
     western = models.BooleanField(default=False)  # 서부극 장르
     likebool = models.BooleanField(default=False)  # 좋아하는지 ON/OF로 저장
+    ytburl = models.CharField(max_length=200, default='kamsx_g2hnI')
 
     def __str__(self):
         return self.subject
