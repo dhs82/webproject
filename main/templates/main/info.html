@@ -14,164 +14,165 @@
 
 <body>
 
-<div id="wrap">
-  <header>
-    <h1><a href="{% url 'homelands' %}">영화 페이지</a></h1>
-  </header>
-  <!--네비게이션-->
-  <nav>
-    <ul>
-      <li><a href="{% url 'info' %}">영화 소개</a></li>
-      <li><a href="{% url 'recommend' %}">영화 검색</a></li>
-      <li><a href="{% url 'find' %}">영화 추천</a></li>
-      <li><a href="{% url 'bookmark' %}">북마크</a></li>
-    </ul>
-  </nav>
-  <!--네비게이션 끗-->
-  <div class="container d-flex justify-content-center" style="padding-top: 30px;">
-    <div class="row justify-content-center">
-      {% for movie in movies %}
-      <div class="col-12 d-flex justify-content-center">
-        <div class="card mb-3" style="margin: 20px; max-width: 700px; min-height: 200px; position: relative;">
-          <button type="button" class="btn btn-primary bookmark-btn" data-id="{{ movie.id }}"
-            style="position: absolute; top: 5px; right: 5px;">
-            {% if movie.likebool %} 북마크 해제 {% else %} 북마크 {% endif %}
-          </button>
-          <div onClick="javascript:popOpen('{{ movie.ytburl }}');" class="row g-0">
-            <div class="col-md-3">
-              <img src="{% static 'images/' %}{{ movie.subject }}.png"
-                onerror="this.onerror=null; this.src='{% static 'images/' %}{{ movie.subject }}.jpg';"
-                style="max-width: 200px; height: 200px;" class="img-fluid rounded-start" alt="{{ movie.subject }}">
-            </div>
-            <div class="col-md-8">
-              <div class="card-body">
-                <h5 class="card-title">{{ movie.subject }}</h5>
-                <p class="card-text">{{ movie.content }}</p>
+  <div id="wrap">
+    <header>
+      <h1><a href="{% url 'homelands' %}">영화 페이지</a></h1>
+    </header>
+    <!--네비게이션-->
+    <nav>
+      <ul>
+        <li><a href="{% url 'info' %}">영화 소개</a></li>
+        <li><a href="{% url 'recommend' %}">영화 검색</a></li>
+        <li><a href="{% url 'find' %}">영화 추천</a></li>
+        <li><a href="{% url 'bookmark' %}">북마크</a></li>
+      </ul>
+    </nav>
+    <!--네비게이션 끗-->
+    <div class="container d-flex justify-content-center" style="padding-top: 30px;">
+      <div class="row justify-content-center">
+        {% for movie in movies %}
+        <div class="col-12 d-flex justify-content-center">
+          <div class="card mb-3" style=" max-width: 900px; min-height: 300px; position: relative;">
+            <button type="button" class="btn btn-secondary bookmark-btn" data-id="{{ movie.id }}"
+              style="position: absolute; top: 5px; right: 5px; margin: 10px">
+              {% if movie.likebool %} 북마크 해제 {% else %} 북마크 {% endif %}
+            </button>
+            <div onClick="javascript:popOpen('{{ movie.ytburl }}');" class="row g-0">
+              <div class="col-md-3">
+                <img src="{% static 'images/' %}{{ movie.subject }}.png"
+                  onerror="this.onerror=null; this.src='{% static 'images/' %}{{ movie.subject }}.jpg';"
+                  style="max-width: 300px; height: 300px;" class="img-fluid rounded-start" alt="{{ movie.subject }}">
+              </div>
+              <div class="col-md-8 d-flex flex-column justify-content-center">
+                <div class="card-body" style="max-height: 100%;">
+                  <h5 class="card-title" style="font-size: 24px; font-weight: bold;">{{ movie.subject }}</h5>
+                  <p class="card-text" style="font-size: 18px; line-height: 1.6; margin-top: 10px;">{{ movie.content }}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
   </div>
-</div>
 
 
-<div class="modal-bg" onClick="javascript:popClose();"></div>
-<div onClick="event.stopPropagation();">
-  <div class="modal-wrap" ></div>
-</div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        function popOpen(ytburl) {
-            var modalWrap = $('.modal-wrap');
-            var modalBg = $('.modal-bg');
+  <div class="modal-bg" onClick="javascript:popClose();"></div>
+  <div onClick="event.stopPropagation();">
+    <div class="modal-wrap"></div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    function popOpen(ytburl) {
+      var modalWrap = $('.modal-wrap');
+      var modalBg = $('.modal-bg');
 
-            // 팝업 내용 추가
-            modalWrap.html(`
+      // 팝업 내용 추가
+      modalWrap.html(`
                 <div id="player-container"></div>
                 <button id="play-button">재생</button>
                 <button id="pause-button">일시정지</button>
             `);
 
-            // 팝업 열기
-            modalWrap.show();
-            modalBg.show();
+      // 팝업 열기
+      modalWrap.show();
+      modalBg.show();
 
-            // YouTube API 로드
-            var tag = document.createElement('script');
-            tag.src = "https://www.youtube.com/iframe_api";
-            var firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      // YouTube API 로드
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-            // 플레이어 변수 초기화
-            var player;
+      // 플레이어 변수 초기화
+      var player;
 
-            // 동영상 플레이어 생성
-            function onYouTubeIframeAPIReady() {
-                player = new YT.Player('player-container', {
-                    height: '315',
-                    width: '560',
-                    videoId: ytburl,
-                    playerVars: {
-                        'autoplay': 0,
-                        'controls': 1,
-                        'disablekb': 1,
-                        'enablejsapi': 1,
-                        'fs': 0,
-                        'iv_load_policy': 3,
-                        'rel': 0,
-                        'showinfo': 0
-                    },
-                    events: {
-                        'onReady': onPlayerReady
-                    }
-                });
-            }
-
-            // 플레이어 준비되면 실행할 함수
-            function onPlayerReady(event) {
-                var playButton = document.getElementById('play-button');
-                var pauseButton = document.getElementById('pause-button');
-
-                playButton.addEventListener('click', function () {
-                    player.playVideo();
-                });
-
-                pauseButton.addEventListener('click', function () {
-                    player.pauseVideo();
-                });
-            }
-
-            // YouTube API 로드 후 동작
-            window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
-        }
-
-        function popClose() {
-            var modalWrap = $('.modal-wrap');
-            var modalBg = $('.modal-bg');
-
-            // 팝업 닫기
-            modalWrap.html('');
-            modalWrap.hide();
-            modalBg.hide();
-
-            window.location.reload();
-        }
-
-        // 북마크 버튼 클릭 시 이벤트 처리
-        $(document).ready(function () {
-            $('.bookmark-btn').click(function () {
-                var button = $(this);
-                var movieId = button.data('id');
-                $.ajax({
-                    url: '{% url "toggle_like" 0 %}'.replace('0', movieId),
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    success: function (response) {
-                        if (response.likebool) {
-                            button.text('북마크 해제');
-                        } else {
-                            button.text('북마크');
-                        }
-                    },
-                    error: function () {
-                        alert('Something went wrong. Please try again.');
-                    }
-                });
-            });
+      // 동영상 플레이어 생성
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player-container', {
+          height: '315',
+          width: '560',
+          videoId: ytburl,
+          playerVars: {
+            'autoplay': 0,
+            'controls': 1,
+            'disablekb': 1,
+            'enablejsapi': 1,
+            'fs': 0,
+            'iv_load_policy': 3,
+            'rel': 0,
+            'showinfo': 0
+          },
+          events: {
+            'onReady': onPlayerReady
+          }
         });
-    </script>
+      }
+
+      // 플레이어 준비되면 실행할 함수
+      function onPlayerReady(event) {
+        var playButton = document.getElementById('play-button');
+        var pauseButton = document.getElementById('pause-button');
+
+        playButton.addEventListener('click', function () {
+          player.playVideo();
+        });
+
+        pauseButton.addEventListener('click', function () {
+          player.pauseVideo();
+        });
+      }
+
+      // YouTube API 로드 후 동작
+      window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+    }
+
+    function popClose() {
+      var modalWrap = $('.modal-wrap');
+      var modalBg = $('.modal-bg');
+
+      // 팝업 닫기
+      modalWrap.html('');
+      modalWrap.hide();
+      modalBg.hide();
+
+      window.location.reload();
+    }
+
+    // 북마크 버튼 클릭 시 이벤트 처리
+    $(document).ready(function () {
+      $('.bookmark-btn').click(function () {
+        var button = $(this);
+        var movieId = button.data('id');
+        $.ajax({
+          url: '{% url "toggle_like" 0 %}'.replace('0', movieId),
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          success: function (response) {
+            if (response.likebool) {
+              button.text('북마크 해제');
+            } else {
+              button.text('북마크');
+            }
+          },
+          error: function () {
+            alert('Something went wrong. Please try again.');
+          }
+        });
+      });
+    });
+  </script>
 
 
-<!--푸터-->
-<footer>
-  <p>&copy; 2024 영화 페이지</p>
-</footer>
-<!--푸터 끗-->
+  <!--푸터-->
+  <footer>
+    <p>&copy; 2024 영화 페이지</p>
+  </footer>
+  <!--푸터 끗-->
 </body>
 
 </html>
