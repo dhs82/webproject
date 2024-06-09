@@ -10,6 +10,21 @@
   <title>영화 페이지</title>
   <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}" />
   <!-- 외부 CSS 파일 연결 -->
+  <style>
+    .card {
+      background-color: #f1f1f1;
+      /* 밝은 회색 배경색 */
+      color: #333;
+      /* 텍스트 색상 */
+      border-radius: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+  </style>
 </head>
 
 <body>
@@ -30,21 +45,22 @@
     <div class="row justify-content-center">
       {% for movie in movies %}
       <div class="col-12 d-flex justify-content-center">
-        <div class="card mb-3" style="margin: 20px; max-width: 700px; min-height: 200px; position: relative;">
-          <button type="button" class="btn btn-primary bookmark-btn" data-id="{{ movie.id }}"
-            style="position: absolute; top: 5px; right: 5px;">
+        <div class="card mb-3" style=" max-width: 900px; min-height: 300px; position: relative;">
+          <button type="button" class="btn btn-secondary bookmark-btn" data-id="{{ movie.id }}"
+            style="position: absolute; top: 5px; right: 5px; margin: 10px">
             {% if movie.likebool %} 북마크 해제 {% else %} 북마크 {% endif %}
           </button>
-          <div class="row g-0">
+          <div onClick="javascript:popOpen('{{ movie.ytburl }}');" class="row g-0">
             <div class="col-md-3">
               <img src="{% static 'images/' %}{{ movie.subject }}.png"
                 onerror="this.onerror=null; this.src='{% static 'images/' %}{{ movie.subject }}.jpg';"
-                style="max-width: 200px; height: 200px;" class="img-fluid rounded-start" alt="{{ movie.subject }}">
+                style="max-width: 300px; height: 300px;" class="img-fluid rounded-start" alt="{{ movie.subject }}">
             </div>
-            <div class="col-md-8">
-              <div class="card-body">
-                <h5 class="card-title">{{ movie.subject }}</h5>
-                <p class="card-text">{{ movie.content }}</p>
+            <div class="col-md-8 d-flex flex-column justify-content-center">
+              <div class="card-body" style="max-height: 100%;">
+                <h5 class="card-title" style="font-size: 24px; font-weight: bold;">{{ movie.subject }}</h5>
+                <p class="card-text" style="font-size: 18px; line-height: 1.6; margin-top: 10px;">{{ movie.content }}
+                </p>
               </div>
             </div>
           </div>
