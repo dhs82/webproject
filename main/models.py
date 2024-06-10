@@ -30,6 +30,29 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.subject
+    def get_genres(self):
+        genres = []
+        genre_fields = [
+            ('action', '액션'),
+            ('adventure', '모험'),
+            ('comedy', '코미디'),
+            ('drama', '드라마'),
+            ('horror', '공포'),
+            ('fantasy', '판타지'),
+            ('sf', 'SF'),
+            ('romance', '로맨스'),
+            ('thriller', '스릴러'),
+            ('mystery', '미스터리'),
+            ('animation', '애니메이션'),
+            ('documentary', '다큐멘터리'),
+            ('musical', '뮤지컬'),
+            ('war', '전쟁'),
+            ('western', '서부극'),
+        ]
+        for field, genre_name in genre_fields:
+            if getattr(self, field):
+                genres.append(genre_name)
+        return ', '.join(genres)
 
 
 class Bookmark(models.Model):
