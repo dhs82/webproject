@@ -10,52 +10,154 @@
   <title>영화 페이지</title>
   <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}" />
   <!-- 외부 CSS 파일 연결 -->
-</head>
+  <style>
+    .card {
+      background-color: #f1f1f1;
+      /* 밝은 회색 배경색 */
+      color: #333;
+      /* 텍스트 색상 */
+      border-radius: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+  </style>
 
 <body>
-  <header>
-    <h1><a href="{% url 'homelands' %}">영화 페이지</a></h1>
-  </header>
-  <!--네비게이션-->
-  <nav>
-    <ul>
-      <li><a href="{% url 'info' %}">영화 소개</a></li>
-      <li><a href="{% url 'recommend' %}">영화 검색</a></li>
-      <li><a href="{% url 'find' %}">영화 추천</a></li>
-      <li><a href="{% url 'bookmark' %}">북마크</a></li>
-    </ul>
-  </nav>
-  <!--네비게이션 끗-->
-  <div class="container d-flex justify-content-center" style="padding-top: 30px;">
-    <div class="row justify-content-center">
-      {% for movie in movies %}
-      <div class="col-12 d-flex justify-content-center">
-        <div class="card mb-3" style="margin: 20px; max-width: 700px; min-height: 200px; position: relative;">
-          <button type="button" class="btn btn-primary bookmark-btn" data-id="{{ movie.id }}"
-            style="position: absolute; top: 5px; right: 5px;">
-            {% if movie.likebool %} 북마크 해제 {% else %} 북마크 {% endif %}
-          </button>
-          <div class="row g-0">
-            <div class="col-md-3">
-              <img src="{% static 'images/' %}{{ movie.subject }}.png"
-                onerror="this.onerror=null; this.src='{% static 'images/' %}{{ movie.subject }}.jpg';"
-                style="max-width: 200px; height: 200px;" class="img-fluid rounded-start" alt="{{ movie.subject }}">
-            </div>
-            <div class="col-md-8">
-              <div class="card-body">
-                <h5 class="card-title">{{ movie.subject }}</h5>
-                <p class="card-text">{{ movie.content }}</p>
+
+  <div id="wrap">
+    <header>
+      <h1><a href="{% url 'homelands' %}">영화 페이지</a></h1>
+    </header>
+    <!--네비게이션-->
+    <nav>
+      <ul>
+        <li><a href="{% url 'info' %}">영화 소개</a></li>
+        <li><a href="{% url 'recommend' %}">영화 검색</a></li>
+        <li><a href="{% url 'find' %}">영화 추천</a></li>
+        <li><a href="{% url 'bookmark' %}">북마크</a></li>
+      </ul>
+    </nav>
+    <!--네비게이션 끗-->
+    <div class="container d-flex justify-content-center" style="padding-top: 30px;">
+      <div class="row justify-content-center">
+        {% for movie in movies %}
+        <div class="col-12 d-flex justify-content-center">
+          <div class="card mb-3" style=" max-width: 900px; min-height: 300px; position: relative;">
+            <button type="button" class="btn btn-secondary bookmark-btn" data-id="{{ movie.id }}"
+              style="position: absolute; top: 5px; right: 5px; margin: 10px">
+              {% if movie.likebool %} 북마크 해제 {% else %} 북마크 {% endif %}
+            </button>
+            <div onClick="javascript:popOpen('{{ movie.ytburl }}');" class="row g-0">
+              <div class="col-md-3">
+                <img src="{% static 'images/' %}{{ movie.subject }}.png"
+                  onerror="this.onerror=null; this.src='{% static 'images/' %}{{ movie.subject }}.jpg';"
+                  style="max-width: 300px; height: 300px;" class="img-fluid rounded-start" alt="{{ movie.subject }}">
+              </div>
+              <div class="col-md-8 d-flex flex-column justify-content-center">
+                <div class="card-body" style="max-height: 250px; position:relative;">
+                  <h5 class="card-title" style="font-size: 24px; font-weight: bold;">{{ movie.subject }}</h5>
+                  <p class="card-text" style="font-size: 15px; line-height: 1.6; margin-top: 10px;">{{ movie.content }}
+                  </p>
+                  <p style="font-size: 10px; line-height: 1.6; position:absolute; bottom:0px;">장르: {{ movie.get_genres }}</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
   </div>
-<!--sdfsdf-->
+
+
+  <div class="modal-bg" onClick="javascript:popClose();"></div>
+  <div onClick="event.stopPropagation();">
+    <div class="modal-wrap"></div>
+  </div>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
+    function popOpen(ytburl) {
+      var modalWrap = $('.modal-wrap');
+      var modalBg = $('.modal-bg');
+
+      // 팝업 내용 추가
+      modalWrap.html(`
+                <div id="player-container"></div>
+                <br>
+                <button id="play-button" style="margin-top:10px">재생</button>
+                <button id="pause-button">일시정지</button>
+            `);
+
+      // 팝업 열기
+      modalWrap.show();
+      modalBg.show();
+
+      // YouTube API 로드
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 플레이어 변수 초기화
+      var player;
+
+      // 동영상 플레이어 생성
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player-container', {
+          height: '315',
+          width: '560',
+          videoId: ytburl,
+          playerVars: {
+            'autoplay': 0,
+            'controls': 1,
+            'disablekb': 1,
+            'enablejsapi': 1,
+            'fs': 0,
+            'iv_load_policy': 3,
+            'rel': 0,
+            'showinfo': 0
+          },
+          events: {
+            'onReady': onPlayerReady
+          }
+        });
+      }
+
+      // 플레이어 준비되면 실행할 함수
+      function onPlayerReady(event) {
+        var playButton = document.getElementById('play-button');
+        var pauseButton = document.getElementById('pause-button');
+
+        playButton.addEventListener('click', function () {
+          player.playVideo();
+        });
+
+        pauseButton.addEventListener('click', function () {
+          player.pauseVideo();
+        });
+      }
+
+      // YouTube API 로드 후 동작
+      window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+    }
+
+    function popClose() {
+      var modalWrap = $('.modal-wrap');
+      var modalBg = $('.modal-bg');
+
+      // 팝업 닫기
+      modalWrap.html('');
+      modalWrap.hide();
+      modalBg.hide();
+
+      window.location.reload();
+    }
+
+    // 북마크 버튼 클릭 시 이벤트 처리
     $(document).ready(function () {
       $('.bookmark-btn').click(function () {
         var button = $(this);
@@ -80,6 +182,7 @@
       });
     });
   </script>
+
 
   <!--푸터-->
   <footer>

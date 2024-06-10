@@ -51,6 +51,15 @@ def homelands(request):
 
 
 def find(request):
-    movies = Movie.objects.all()
-    movie = random.choice(movies) if movies else None
+    # likebool이 True인 영화 목록 가져오기
+    liked_movies = Movie.objects.filter(likebool=True)
+
+    # likebool이 None이 아닌 영화 목록 중에서 무작위 선택
+    if liked_movies.exists():
+        movie = random.choice(liked_movies)
+    else:
+        # likebool이 True인 영화가 없는 경우, 모든 영화 중에서 무작위 선택
+        all_movies = Movie.objects.all()
+        movie = random.choice(all_movies) if all_movies.exists() else None
+
     return render(request, 'main/find.html', {'movies': [movie] if movie else []})
