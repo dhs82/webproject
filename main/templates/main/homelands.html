@@ -1,37 +1,385 @@
 <!DOCTYPE html>
-{% load static%}
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>영화 페이지</title>
-    <link rel="stylesheet" type="text/css" href="{%static 'css/styles.css'%}" />
-    <!-- 외부 CSS 파일 연결 -->
-  </head>
-  <body>
-    <header>
-      <h1><a href="{% url 'homelands' %}">영화 페이지</a></h1>
+<html lang="en">
+
+<head>
+     {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineGuide</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}" />
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        .hero {
+            position: relative;
+            background-image: url('https://images.squarespace-cdn.com/content/v1/54992035e4b0c49940a59e49/1562443105753-NO6AWLZE7K3TD7OBY9KY/uploads%252Fcard%252Fimage%252F249522%252FScreen_Shot_2016-10-17_at_2.07.25_PM.png%252F950x534__filters%253Aquality%252880%2529.png?format=2500w');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            animation: fadeIn 2s;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            letter-spacing: 1px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .featured,
+        .recommendations,
+        .genres,
+        .about,
+        .contact {
+            padding: 50px 0;
+        }
+
+        .featured h2,
+        .recommendations h2,
+        .genres h2,
+        .about h2,
+        .contact h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .movie-card {
+            transition: transform 0.2s;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.05);
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #ffc107;
+        }
+
+        header {
+            background-color: #333;
+            padding: 8px 0;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transform: translateY(-100%);
+            transition: transform 0.3s;
+        }
+
+        .nav-container {
+            background-color: #333;
+        }
+
+        .visible-nav {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <header id="navbar">
+        <div class="container">
+            <h1><a href="#">CineGuide</a></h1>
+            <nav class="nav-container">
+                <ul class="nav">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'info' %}">영화 소개</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'recommend' %}">영화 검색</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'find' %}">영화 추천</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'bookmark' %}">북마크</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
-    <nav>
-      <ul>
-      <li><a href="{% url 'info' %}">영화 소개</a></li>
-      <li><a href="{% url 'recommend' %}">영화 검색</a></li>
-      <li><a href="{% url 'find' %}">영화 추천</a></li>
-      <li><a href="{% url 'bookmark' %}">북마크</a></li>
-      </ul>
-    </nav>
-    <section id="movie-intro">
-      <h2>메인페이지</h2>
-      <p>메인페이지임:</p>
-      <ul>
-        <li>어벤져스: 엔드게임</li>
-        <li>존 윅 3</li>
-        <li>기생충</li>
-        <li>분노의 질주: 홉스 & 쇼</li>
-      </ul>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to CineGuide</h1>
+            <p>Your Ultimate Movie Recommendation and Introduction Hub</p>
+        </div>
     </section>
-    <footer>
-      <p>&copy; 2024 영화 페이지</p>
+
+    <!-- Featured Movies Section -->
+    <section class="featured">
+        <div class="container">
+            <h2>Featured Movies</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card movie-card">
+                        <!-- Add image for Movie 1 here -->
+                        <img src="https://source.unsplash.com/800x600/?movie" class="card-img-top" alt="Movie 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Movie Title 1</h5>
+                            <p class="card-text">A brief description of the movie goes here. This is a placeholder text.</p>
+                            <a href="#" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card movie-card">
+                        <!-- Add image for Movie 2 here -->
+                        <img src="https://source.unsplash.com/800x600/?cinema" class="card-img-top" alt="Movie 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Movie Title 2</h5>
+                            <p class="card-text">A brief description of the movie goes here. This is a placeholder text.</p>
+                            <a href="#" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card movie-card">
+                        <!-- Add image for Movie 3 here -->
+                        <img src="https://source.unsplash.com/800x600/?film" class="card-img-top" alt="Movie 3">
+                        <div class="card-body">
+                            <h5 class="card-title">Movie Title 3</h5>
+                            <p class="card-text">A brief description of the movie goes here. This is a placeholder text.</p>
+                            <a href="#" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommendations Section -->
+    <section class="recommendations">
+        <div class="container">
+            <h2>Recommended for You</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card movie-card">
+                        <!-- Add image for Recommended Movie 1 here -->
+                        <img src="https://source.unsplash.com/800x600/?popcorn" class="card-img-top" alt="Recommended Movie 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Recommended Movie 1</h5>
+                            <p class="card-text">A brief description of the movie goes here. This is a placeholder text.</p>
+                            <a href="#" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card movie-card">
+                        <!-- Add image for Recommended Movie 2 here -->
+                        <img src="https://source.unsplash.com/800x600/?actor" class="card-img-top" alt="Recommended Movie 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Recommended Movie 2</h5>
+                            <p class="card-text">A brief description of the movie goes here. This is a placeholder text.</p>
+                            <a href="#" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card movie-card">
+                        <!-- Add image for Recommended Movie 3 here -->
+                        <img src="https://source.unsplash.com/800x600/?director" class="card-img-top" alt="Recommended Movie 3">
+                        <div class="card-body">
+                            <h5 class="card-title">Recommended Movie 3</h5>
+                            <p class="card-text">A brief description of the movie goes here. This is a placeholder text.</p>
+                            <a href="#" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card movie-card">
+                        <!-- Add image for Recommended Movie 4 here -->
+                        <img src="https://source.unsplash.com/800x600/?hollywood" class="card-img-top" alt="Recommended Movie 4">
+                        <div class="card-body">
+                            <h5 class="card-title">Recommended Movie 4</h5>
+                            <p class="card-text">A brief description of the movie goes here. This is a placeholder text.</p>
+                            <a href="#" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Movie Genres Section -->
+    <section class="genres">
+        <div class="container">
+            <h2>Explore by Genre</h2>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="card genre-card">
+                        <!-- Add image for Action genre here -->
+                        <img src="https://source.unsplash.com/800x600/?action" class="card-img-top" alt="Action">
+                        <div class="card-body">
+                            <h5 class="card-title">Action</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card genre-card">
+                        <!-- Add image for Comedy genre here -->
+                        <img src="https://source.unsplash.com/800x600/?comedy" class="card-img-top" alt="Comedy">
+                        <div class="card-body">
+                            <h5 class="card-title">Comedy</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card genre-card">
+                        <!-- Add image for Drama genre here -->
+                        <img src="https://source.unsplash.com/800x600/?drama" class="card-img-top" alt="Drama">
+                        <div class="card-body">
+                            <h5 class="card-title">Drama</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card genre-card">
+                        <!-- Add image for Horror genre here -->
+                        <img src="https://source.unsplash.com/800x600/?horror" class="card-img-top" alt="Horror">
+                        <div class="card-body">
+                            <h5 class="card-title">Horror</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card genre-card">
+                        <!-- Add image for Romance genre here -->
+                        <img src="https://source.unsplash.com/800x600/?romance" class="card-img-top" alt="Romance">
+                        <div class="card-body">
+                            <h5 class="card-title">Romance</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card genre-card">
+                        <!-- Add image for Sci-Fi genre here -->
+                        <img src="https://source.unsplash.com/800x600/?scifi" class="card-img-top" alt="Sci-Fi">
+                        <div class="card-body">
+                            <h5 class="card-title">Sci-Fi</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about">
+        <div class="container">
+            <h2>About CineGuide</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- Add image for About section here -->
+                    <img src="https://source.unsplash.com/800x600/?theater" class="img-fluid" alt="About Us">
+                </div>
+                <div class="col-md-6">
+                    <p>CineGuide is your one-stop destination for discovering and exploring the world of movies. Whether you are a casual viewer or a cinephile, we provide the latest movie recommendations, in-depth reviews, and insights into the film industry.</p>
+                    <p>Our mission is to enhance your movie-watching experience by curating the best movies and providing personalized recommendations tailored to your taste. Join our community and dive into the fascinating world of cinema!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputName">Name</label>
+                        <input type="text" class="form-control" id="inputName" placeholder="Your Name">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail">Email</label>
+                        <input type="email" class="form-control" id="inputEmail" placeholder="Your Email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputMessage">Message</label>
+                    <textarea class="form-control" id="inputMessage" rows="4" placeholder="Your Message"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 CineGuide. All Rights Reserved.</p>
+            <p>Follow us on
+                <a href="#">Facebook</a>,
+                <a href="#">Twitter</a>,
+                <a href="#">Instagram</a>
+            </p>
+        </div>
     </footer>
-  </body>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        window.addEventListener('scroll', function () {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 0) {
+                navbar.classList.add('visible-nav');
+            } else {
+                navbar.classList.remove('visible-nav');
+            }
+        });
+    </script>
+</body>
+
 </html>
